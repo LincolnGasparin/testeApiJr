@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import orderController from "./controller/orderController.js";
-import orderServices from "./services/orderServices.js";
+import userController from "./controller/userController.js";
 import "dotenv/config";
+import { authMiddleware } from "./services/authMiddleware.js";
 
 // Configuração do CORS
 
@@ -14,11 +15,16 @@ app.use(cors());
 
 app.get("/", (req, res) => {});
 
-app.post("/orders", orderController.criar);
-app.get("/orders/list", orderController.listar);
-app.get("/orders/:id", orderController.buscarPorId);
-app.delete("/orders/:id", orderController.deletarOrder);
-app.put("/orders/:id", orderController.atualizarOrder);
+//ROTAS USUARIOS
+app.post("/login", userController.login);
+app.post("/registrar", userController.register);
+
+//ROTAS PEDIDOS
+app.post("/orders", authMiddleware, orderController.criar);
+app.get("/orders/list", authMiddleware, orderController.listar);
+app.get("/orders/:id", authMiddleware, orderController.buscarPorId);
+app.delete("/orders/:id", authMiddleware, orderController.deletarOrder);
+app.put("/orders/:id", authMiddleware, orderController.atualizarOrder);
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
