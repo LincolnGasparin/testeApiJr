@@ -1,6 +1,7 @@
 import prisma from "../prisma/prismaCliente.js";
 
 const inserir = async (dados) => {
+  console.log(dados);
   const resultado = await prisma.$transaction(async (tx) => {
     const order = await tx.order.create({
       data: {
@@ -47,14 +48,14 @@ const buscarPorId = async (id) => {
 
 const deletarOrder = async (id) => {
   return await prisma.$transaction(async (tx) => {
-    // 1️⃣ deletar items da order
+    //  deletar items da order
     await tx.items.deleteMany({
       where: {
         orderId: id,
       },
     });
 
-    // 2️⃣ deletar order
+    // deletar order
     const order = await tx.order.delete({
       where: {
         orderId: id,
@@ -65,11 +66,54 @@ const deletarOrder = async (id) => {
   });
 };
 
+const atualizarOrder = async (id, data) => {
+  console.log(id);
+  console.log(data);
+  console.log(data.items);
+  return await prisma.$transaction(async (tx) => {
+    //  atualizar order
+    const order = await tx.order.update({
+      where: {
+        orderId: id,
+      },
+      data: {
+        value: data.value,
+      },
+    });
+
+    //checando se ja tem o item no pedido se não adiciona.
+    for (const item of data.items) {
+      await tx.items.upsert({
+        where: {
+          orderId_productId: {
+            orderId: data.orderId,
+            productId: item.productId,
+          },
+        },
+
+        update: {
+          quantity: item.quantity,
+          price: item.price,
+        },
+
+        create: {
+          orderId: data.orderId,
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+        },
+      });
+    }
+    return order;
+  });
+};
+
 const orderRepositories = {
   inserir,
   listar,
   buscarPorId,
   deletarOrder,
+  atualizarOrder,
 };
 
 export default orderRepositories;

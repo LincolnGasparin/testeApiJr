@@ -29,7 +29,6 @@ const listar = async (req, res) => {
 const buscarPorId = async (req, res) => {
   try {
     const { id } = req.params;
-
     const order = await orderServices.buscarPorId(id);
 
     if (!order) {
@@ -56,11 +55,28 @@ const deletarOrder = async (req, res) => {
       .json({ message: "Erro ao deletar order", error: error.message });
   }
 };
+
+const atualizarOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { value, items } = req.body;
+
+    const order = await orderServices.atualizarOrder(id, req.body);
+    res.json(order);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Erro ao atualizar order", error: error.message });
+  }
+};
+
 const orderController = {
   criar,
   listar,
   buscarPorId,
   deletarOrder,
+  atualizarOrder,
 };
 
 export default orderController;

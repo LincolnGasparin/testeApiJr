@@ -18,6 +18,7 @@ app.post("/orders", orderController.criar);
 app.get("/orders/list", orderController.listar);
 app.get("/orders/:id", orderController.buscarPorId);
 app.delete("/orders/:id", orderController.deletarOrder);
+app.put("/orders/:id", orderController.atualizarOrder);
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);

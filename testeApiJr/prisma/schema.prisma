@@ -16,7 +16,7 @@ model Order {
 
 model Items {
   orderId   String
-  productId Int
+  productId Int   @id
   quantity  Int
   price     Float
 
