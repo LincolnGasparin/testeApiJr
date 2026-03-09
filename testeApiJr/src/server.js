@@ -15,10 +15,9 @@ app.use(cors());
 app.get("/", (req, res) => {});
 
 app.post("/orders", orderController.criar);
-app.get("/orders/list", async (req, res) => {
-  const perguntas = await orderServices.listar();
-  res.status(200).json(perguntas);
-});
+app.get("/orders/list", orderController.listar);
+app.get("/orders/:id", orderController.buscarPorId);
+app.delete("/orders/:id", orderController.deletarOrder);
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);

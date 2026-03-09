@@ -36,9 +36,40 @@ const listar = async () => {
   return orders;
 };
 
+const buscarPorId = async (id) => {
+  const order = await prisma.order.findUnique({
+    where: { orderId: id },
+    include: { items: true },
+  });
+
+  return order;
+};
+
+const deletarOrder = async (id) => {
+  return await prisma.$transaction(async (tx) => {
+    // 1️⃣ deletar items da order
+    await tx.items.deleteMany({
+      where: {
+        orderId: id,
+      },
+    });
+
+    // 2️⃣ deletar order
+    const order = await tx.order.delete({
+      where: {
+        orderId: id,
+      },
+    });
+
+    return order;
+  });
+};
+
 const orderRepositories = {
   inserir,
   listar,
+  buscarPorId,
+  deletarOrder,
 };
 
 export default orderRepositories;
