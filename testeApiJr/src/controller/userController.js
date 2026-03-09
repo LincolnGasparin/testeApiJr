@@ -4,6 +4,7 @@ import userServices from "../services/userServices.js";
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+  console.log(email, password);
 
   const user = await userServices.buscarUsuario(email);
 

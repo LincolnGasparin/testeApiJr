@@ -59,9 +59,9 @@ const deletarOrder = async (req, res) => {
 const atualizarOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { value, items } = req.body;
+    const data = req.body;
 
-    const order = await orderServices.atualizarOrder(id, req.body);
+    const order = await orderServices.atualizarOrder(id, data);
     res.json(order);
   } catch (error) {
     console.error(error);

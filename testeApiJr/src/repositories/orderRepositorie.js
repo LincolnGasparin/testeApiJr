@@ -67,9 +67,6 @@ const deletarOrder = async (id) => {
 };
 
 const atualizarOrder = async (id, data) => {
-  console.log(id);
-  console.log(data);
-  console.log(data.items);
   return await prisma.$transaction(async (tx) => {
     //  atualizar order
     const order = await tx.order.update({
@@ -78,6 +75,7 @@ const atualizarOrder = async (id, data) => {
       },
       data: {
         value: data.value,
+        creationDate: new Date(data.creationDate),
       },
     });
 
@@ -86,7 +84,7 @@ const atualizarOrder = async (id, data) => {
       await tx.items.upsert({
         where: {
           orderId_productId: {
-            orderId: data.orderId,
+            orderId: id,
             productId: item.productId,
           },
         },
@@ -97,7 +95,7 @@ const atualizarOrder = async (id, data) => {
         },
 
         create: {
-          orderId: data.orderId,
+          orderId: id,
           productId: item.productId,
           quantity: item.quantity,
           price: item.price,
